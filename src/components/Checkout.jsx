@@ -74,7 +74,7 @@ const Checkout = () => {
               );
             })}
             <div className="text-lg xl:text-xl text-right mb-4 mr-4">
-              Subtitle ({itemsNumber}items):{" "}
+              Subtotal ({itemsNumber}items):{" "}
               <span className="font-semibold">
                 {ZA_CURRENCY.format(subtotal)}
               </span>
@@ -88,7 +88,7 @@ const Checkout = () => {
               Details
             </div>
             <div className="text-base xl:text-lg mb-4">
-              Subtitle ({itemsNumber}items):{" "}
+              Subtotal ({itemsNumber} items):{" "}
               <span className="font-semibold">
                 {ZA_CURRENCY.format(subtotal)}
               </span>
