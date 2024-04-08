@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/authSlice";
 import { auth } from "../firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const Signup = () => {
 
@@ -11,12 +12,21 @@ const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("")
+  const [isEmailValid, setIsEmailValid] = useState(true)
 
   const handleSignup = async (e) => {
     e.preventDefault();
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(!emailRegex.test(email)) {
+      console.error("Invalid email format")
+      setIsEmailValid(false)
+      return;
+    }
+
     try {
-      const userCredential = await auth.createUserWithEmailAndPassword(
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
         email,
         password
       );
@@ -25,7 +35,7 @@ const Signup = () => {
 
       dispatch(setUser({ uid: user.uid, email, name }));
 
-      navigate("/signin")
+      navigate("/")
     } catch (error) {
       console.error("Error signing up:", error.message);
     }
@@ -37,7 +47,7 @@ const Signup = () => {
         <h2 className="text-2xl font-bold mb-6 text-center">
           Create Amazon Account
         </h2>
-        <form>
+        <form onSubmit={handleSignup}>
           <div className="mb-4">
             <label
               htmlFor="name"
@@ -68,10 +78,17 @@ const Signup = () => {
               name="email"
               autoComplete="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+              onChange={(e) => {
+                setEmail(e.target.value)
+                setIsEmailValid(true)
+              }}
+              className={`mt-1 p-2 w-full border ${
+                isEmailValid ? "border-gray-300": "border-red-500"} rounded-md`}
               required
             />
+            {!isEmailValid && (
+              <p className="text-red-500 text-sm mt-1">Invalid email</p>
+            )}
           </div>
           <div className="mb-6">
             <label
